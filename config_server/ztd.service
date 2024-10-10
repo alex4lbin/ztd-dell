@@ -1,0 +1,12 @@
+[Unit]
+Description=ZTD server for Dell OS10
+After=network.target
+
+[Service]
+User=vagrant
+Group=vagrant
+WorkingDirectory=/home/vagrant/ztd/post_ztd
+ExecStart=/home/vagrant/ztd/venv/bin/gunicorn post_ztd:app -w 8
+
+[Install]
+WantedBy=multi-user.target

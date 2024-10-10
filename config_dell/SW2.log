@@ -1,0 +1,44 @@
+# PRE-CONFIG
+# POST-CONFIG
+hostname SW2
+!
+interface vlan1
+ no shutdown
+ no ip address
+!
+interface mgmt1/1/1
+ no shutdown
+ no ip address
+ ip address 10.30.1.102/24
+!
+interface vlan20
+ no shutdown
+ ip address 20.20.20.20/24
+!
+interface vlan21
+ no shutdown
+!
+interface vlan22
+ no shutdown
+!
+interface vlan23
+ no shutdown
+!
+interface vlan24
+ no shutdown
+!
+interface vlan25
+ no shutdown
+!
+interface vlan26
+ no shutdown
+!
+interface vlan27
+ no shutdown
+!
+interface vlan28
+ no shutdown
+!
+interface vlan29
+ no shutdown
+!

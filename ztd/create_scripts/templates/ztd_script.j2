@@ -1,0 +1,10 @@
+#!/bin/bash
+
+IP_BASE='{{ ip_base }}'
+URL_BASE="http://$IP_BASE/ztd"
+
+# IMG_FILE="$URL_BASE/OS10.bin"
+CLI_CONFIG_FILE="$URL_BASE/{{ host }}.log"
+POST_SCRIPT_FILE="$URL_BASE/post_ztd.sh"
+
+sudo os10_ztd_start.sh "$IMG_FILE" "$CLI_CONFIG_FILE" "$POST_SCRIPT_FILE"
