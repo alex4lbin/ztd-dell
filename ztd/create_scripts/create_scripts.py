@@ -1,12 +1,16 @@
 import json
 import csv
 import copy
-from jinja2 import Template
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+from jinja2 import Template
+
+load_dotenv()
 
 CONFIG = "/vagrant/device_info.csv"
 TEMPLATES = "templates"
-IP_BASE = "10.30.1.210"
+IP_BASE = os.getenv("IP_BASE")
 URL_BASE = f"http://{IP_BASE}/ztd"
 
 def read_config(path: str) -> list[dict]:

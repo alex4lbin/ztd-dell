@@ -21,7 +21,8 @@ rm $KEA_DIR/* ; rm $NGINX_DIR_BASE/sites-enabled/*
 # Generate DHCP config and provisioning script for each switch
 cp -r /vagrant/ztd $HOME_DIR && cd $HOME_DIR/ztd
 python3 -m venv venv
-venv/bin/pip install flask gunicorn netmiko
+venv/bin/pip install flask gunicorn netmiko python-dotenv
+echo "IP_BASE=$1" > create_scripts/.env
 chown -R vagrant:vagrant $HOME_DIR/ztd
 cd create_scripts
 su vagrant -c '../venv/bin/python create_scripts.py'
