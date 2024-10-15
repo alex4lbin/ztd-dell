@@ -7,6 +7,7 @@ from netmiko import ConnectHandler, NetmikoAuthenticationException, NetmikoTimeo
 from devices import DellOS10
 
 CONFIG = "/vagrant/device_info.csv"
+COMMANDS = "/vagrant/commands.txt"
 
 app = Flask(__name__)
 
@@ -64,7 +65,7 @@ def get_config(ip) -> None:
     with open(f"{hostname}_run.log", "w") as f:
         f.write(output)
     # get result of show commands
-    commands = get_commands("commands.txt")
+    commands = get_commands(COMMANDS)
     app.logger.info(f"[{ip}] Running show commands")
     output = run_commands(handler, commands)
     with open(f"{hostname}_show.log", "w") as f:
