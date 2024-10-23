@@ -1,27 +1,33 @@
-import logging
 import csv
-from threading import Thread
+import logging
 from logging.handlers import RotatingFileHandler
-from flask import Flask, request
-from netmiko import ConnectHandler, NetmikoAuthenticationException, NetmikoTimeoutException
+from threading import Thread
 
 from devices import DellOS10
+from flask import Flask, request
+from netmiko import (
+    ConnectHandler,
+    NetmikoAuthenticationException,
+    NetmikoTimeoutException,
+)
 
 CONFIG = "/vagrant/device_info.csv"
 COMMANDS = "/vagrant/commands.txt"
 
 app = Flask(__name__)
 
-file_handler = RotatingFileHandler('/vagrant/ztd.log',
-                                    maxBytes=10240, backupCount=10)
-file_handler.setFormatter(logging.Formatter(
-    '%(asctime)s %(levelname)s: %(message)s '
-    '[in %(pathname)s:%(lineno)d]'))
+file_handler = RotatingFileHandler("/vagrant/ztd.log", maxBytes=10240, backupCount=10)
+file_handler.setFormatter(
+    logging.Formatter(
+        "%(asctime)s %(levelname)s: %(message)s " "[in %(pathname)s:%(lineno)d]"
+    )
+)
 file_handler.setLevel(logging.INFO)
 app.logger.addHandler(file_handler)
 app.logger.setLevel(logging.INFO)
 
-@app.route("/kickstart", methods=['POST'])
+
+@app.route("/kickstart", methods=["POST"])
 def kickstart():
     if request.is_json:
         data = request.json
@@ -30,8 +36,9 @@ def kickstart():
             app.logger.info(f"Recieved POST from {ip}. Deployment finished.")
             t = Thread(target=get_config, args=(ip,))
             t.start()
-            return "OK",200
-    return "FAIL",400
+            return "OK", 200
+    return "FAIL", 400
+
 
 def run_commands(handler: ConnectHandler, commands: list[str]) -> str:
     ip = handler.host
@@ -41,16 +48,19 @@ def run_commands(handler: ConnectHandler, commands: list[str]) -> str:
         output += handler.send_command(command, strip_command=False, strip_prompt=False)
     return output
 
+
 def get_commands(path: str) -> list[str]:
     with open(path, "r") as f:
         return [line.strip() for line in f.readlines()]
-    
+
+
 def get_password(ip: str) -> str:
     with open(CONFIG) as f:
         reader = csv.DictReader(f)
         for row in reader:
             if row.get("ip") == ip:
                 return row.get("passwd")
+
 
 def get_config(ip) -> None:
     password = get_password(ip)
@@ -75,5 +85,6 @@ def get_config(ip) -> None:
     handler.disconnect()
     app.logger.info(f"[{ip}] Success!")
 
+
 if __name__ == "__main__":
-    app.run(debug=True,host="0.0.0.0")
+    app.run(debug=True, host="0.0.0.0")
