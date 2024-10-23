@@ -6,6 +6,7 @@ class DellOS10:
     device_type: str = "dell_os10"
     username: str = "admin"
     password: str = "admin"
+    read_timeout_override: int = 180
 
     def as_dict(self):
         return asdict(self)
