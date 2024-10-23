@@ -1,5 +1,6 @@
 import logging
 import csv
+from threading import Thread
 from logging.handlers import RotatingFileHandler
 from flask import Flask, request
 from netmiko import ConnectHandler, NetmikoAuthenticationException, NetmikoTimeoutException
@@ -27,7 +28,8 @@ def kickstart():
         if data.get("data") == "GO!!":
             ip = request.headers.get("X-Real-Ip")
             app.logger.info(f"Recieved POST from {ip}. Deployment finished.")
-            get_config(ip)
+            t = Thread(target=get_config, args=(ip,))
+            t.start()
             return "OK",200
     return "FAIL",400
 
