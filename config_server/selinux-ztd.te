@@ -1,0 +1,23 @@
+
+module selinux-ztd 1.0;
+
+require {
+	type fusefs_t;
+	type init_t;
+	type user_home_t;
+	type ssh_port_t;
+	class file { append execute execute_no_trans ioctl map open read write create rename};
+	class lnk_file read;
+	class tcp_socket name_connect;
+}
+
+#============= init_t ==============
+allow init_t fusefs_t:file { append ioctl open create read};
+
+#!!!! This avc can be allowed using the boolean 'domain_can_mmap_files'
+allow init_t user_home_t:file map;
+allow init_t user_home_t:file { execute execute_no_trans ioctl open read write create rename };
+allow init_t user_home_t:lnk_file read;
+
+#!!!! This avc can be allowed using the boolean 'nis_enabled'
+allow init_t ssh_port_t:tcp_socket name_connect;
