@@ -12,7 +12,7 @@ CONFIG = "/vagrant/device_info.csv"
 COMMANDS = "/vagrant/commands.txt"
 
 
-def create_device(ip: str, passwd: str = None) -> DellOS10:
+def create_device(ip: str, passwd: str | None = None) -> DellOS10:
     if passwd is None:
         passwd = get_password_by_ip(ip)
     return DellOS10(host=ip, password=passwd)
@@ -24,6 +24,7 @@ def get_password_by_ip(ip: str) -> str:
         for row in reader:
             if row.get("ip") == ip:
                 return row.get("passwd")
+    return "admin"
 
 
 def get_commands(path: str) -> list[str]:
