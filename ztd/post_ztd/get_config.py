@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime
 
 from devices import DellOS10
 from logger import logger
@@ -32,13 +33,29 @@ def get_commands(path: str) -> list[str]:
         return [line.strip() for line in f.readlines()]
 
 
-def run_commands(handler: ConnectHandler, commands: list[str]) -> str:
+def run_command(handler: ConnectHandler, command: str) -> str:
     ip = handler.host
     output = handler.find_prompt() + " "
-    for command in commands:
-        logger.info(f"[{ip}] Sending '{command}'")
-        output += handler.send_command(command, strip_command=False, strip_prompt=False)
+    logger.info(f"[{ip}] Sending '{command}'")
+    output += handler.send_command(command, strip_command=False, strip_prompt=False)
     return output
+
+
+def parse_command(command: str) -> str:
+    base_command, *_ = command.split("|")
+    parsed = "_".join([word[:4] for word in base_command.strip().split(" ")])
+    return parsed
+
+
+def get_current_time() -> str:
+    now = datetime.now().strftime("%y%m%d_%H%M%S_%f")
+    return now
+
+
+def command2fname(command: str) -> str:
+    parsed = parse_command(command)
+    now = get_current_time()
+    return f"{parsed}_{now}"
 
 
 def get_config(sw: DellOS10) -> None:
@@ -57,9 +74,11 @@ def get_config(sw: DellOS10) -> None:
     # get result of show commands
     commands = get_commands(COMMANDS)
     logger.info(f"[{ip}] Running show commands")
-    output = run_commands(handler, commands)
-    with open(f"{hostname}_show.log", "w") as f:
-        f.write(output)
+    for command in commands:
+        output = run_command(handler, command)
+        fname = command2fname(command)
+        with open(f"{hostname}_{fname}.log", "w") as f:
+            f.write(output)
     handler.disconnect()
     logger.info(f"[{ip}] Success!")
 
